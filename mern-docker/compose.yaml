@@ -1,0 +1,68 @@
+# specify the version of docker-compose
+version: "3.8"
+
+# define the services/containers to be run
+services:
+  # define the frontend service
+  web:
+    depends_on: 
+      - api
+    build: ./frontend
+    ports:
+      - 5173:5173
+    environment:
+      VITE_API_URL: http://localhost:8000
+    develop:
+      # we specify the files to watch for changes
+      watch:
+        # it'll watch for changes in package.json and package-lock.json and rebuild the container if there are any changes
+        - path: ./frontend/package.json
+          action: rebuild
+        - path: ./frontend/package-lock.json
+          action: rebuild
+        # it'll watch for changes in the frontend directory and sync the changes with the container real time
+        - path: ./frontend
+          target: /app
+          action: sync
+
+  # define the api service/container
+  api: 
+    # api service depends on the db service so the db service will be started before the api service
+    depends_on: 
+      - db
+
+    # specify the build context for the api service
+    build: ./backend
+    ports: 
+      - 8000:8000
+
+    # specify environment variables for the api service
+    environment: 
+      DB_URL: mongodb://db/anime
+    
+    # establish docker compose watch mode for the api service
+    develop:
+      # specify the files to watch for changes
+      watch:
+        # it'll watch for changes in package.json and package-lock.json and rebuild the container and image if there are any changes
+        - path: ./backend/package.json
+          action: rebuild
+        - path: ./backend/package-lock.json
+          action: rebuild
+        
+        # it'll watch for changes in the backend directory and sync the changes with the container real time
+        - path: ./backend
+          target: /app
+          action: sync
+
+  # define the db service
+  db:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - anime:/data/db
+
+# define the volumes to be used by the services
+volumes:
+  anime:
