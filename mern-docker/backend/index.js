@@ -20,7 +20,7 @@ app.use(
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  console.log("Hello World!".rainbow);
+  console.log("Hello World!".trap);
 
   res.send("Hello World!");
 });

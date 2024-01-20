@@ -20,10 +20,10 @@ function App() {
             Share
           </Link>
           <Link to="/create" className="navbar_link">
-            Trending
+            Class
           </Link>
           <Link to="/create" className="navbar_link">
-            Profile
+            Login
           </Link>
         </div>
       </nav>
